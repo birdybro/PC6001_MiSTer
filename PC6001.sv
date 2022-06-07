@@ -284,11 +284,11 @@ PC6001 PC6001
 	.FLASH_CE_N(),		// out   std_logic;						-- FLASH chip enable
 	.FLASH_OE_N(),		// out   std_logic;						-- FLASH output enable
 	.FLASH_BYTE_N(),	// out   std_logic;						-- FLASH byte mode
-	.VGA_R(),			// out   std_logic_vector(3 downto 0);	-- VGA red data
-	.VGA_G(),			// out   std_logic_vector(3 downto 0);	-- VGA green data
-	.VGA_B(),			// out   std_logic_vector(3 downto 0);	-- VGA blue data
-	.VGA_HS(),			// out   std_logic;						-- VGA H_SYNC
-	.VGA_VS(),			// out   std_logic;						-- VGA V_SYNC
+	.VGA_R(VGA_R),			// out   std_logic_vector(3 downto 0);	-- VGA red data
+	.VGA_G(VGA_G),			// out   std_logic_vector(3 downto 0);	-- VGA green data
+	.VGA_B(VGA_B),			// out   std_logic_vector(3 downto 0);	-- VGA blue data
+	.VGA_HS(HSync),			// out   std_logic;						-- VGA H_SYNC
+	.VGA_VS(VSync),			// out   std_logic;						-- VGA V_SYNC
 	.HEX3_D(),			// out   std_logic_vector(6 downto 0);	-- 7segment #3
 	.HEX3_DP(),			// out   std_logic;						-- 7segment #3 DP
 	.HEX2_D(),			// out   std_logic_vector(6 downto 0);	-- 7segment #2

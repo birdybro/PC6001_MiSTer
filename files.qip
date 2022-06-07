@@ -31,10 +31,7 @@ set_global_assignment -name VHDL_FILE rtl/MATRIXROM.vhd
 set_global_assignment -name VHDL_FILE rtl/PC6001.vhd
 set_global_assignment -name VHDL_FILE rtl/PIO8255.vhd
 set_global_assignment -name VHDL_FILE rtl/PIO8255M1.vhd
-set_global_assignment -name VHDL_FILE rtl/PLL16M100M.vhd
-set_global_assignment -name VHDL_FILE rtl/PLL25M_MK2.vhd
-set_global_assignment -name VHDL_FILE rtl/PLL25M_P6.vhd
-set_global_assignment -name VHDL_FILE rtl/PLL114M.vhd
+
 set_global_assignment -name VHDL_FILE rtl/PS2KEY.vhd
 set_global_assignment -name VHDL_FILE rtl/RSTGEN.vhd
 set_global_assignment -name VHDL_FILE rtl/SDRAM.vhd
