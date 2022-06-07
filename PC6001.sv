@@ -233,12 +233,13 @@ hps_io #(.CONF_STR(CONF_STR)) hps_io
 
 ///////////////////////   CLOCKS   ///////////////////////////////
 
-wire clk_sys;
+wire clk_sys, clk_sys2;
 pll pll
 (
 	.refclk(CLK_50M),
 	.rst(0),
-	.outclk_0(clk_sys)
+	.outclk_0(clk_sys),
+	.outclk_1(clk_sys2)
 );
 
 wire reset = RESET | status[0] | buttons[1];
@@ -284,11 +285,11 @@ PC6001 PC6001
 	.FLASH_CE_N(),		// out   std_logic;						-- FLASH chip enable
 	.FLASH_OE_N(),		// out   std_logic;						-- FLASH output enable
 	.FLASH_BYTE_N(),	// out   std_logic;						-- FLASH byte mode
-	.VGA_R(VGA_R),			// out   std_logic_vector(3 downto 0);	-- VGA red data
-	.VGA_G(VGA_G),			// out   std_logic_vector(3 downto 0);	-- VGA green data
-	.VGA_B(VGA_B),			// out   std_logic_vector(3 downto 0);	-- VGA blue data
-	.VGA_HS(HSync),			// out   std_logic;						-- VGA H_SYNC
-	.VGA_VS(VSync),			// out   std_logic;						-- VGA V_SYNC
+	.VGA_R(VGA_R),		// out   std_logic_vector(3 downto 0);	-- VGA red data
+	.VGA_G(VGA_G),		// out   std_logic_vector(3 downto 0);	-- VGA green data
+	.VGA_B(VGA_B),		// out   std_logic_vector(3 downto 0);	-- VGA blue data
+	.VGA_HS(HSync),		// out   std_logic;						-- VGA H_SYNC
+	.VGA_VS(VSync),		// out   std_logic;						-- VGA V_SYNC
 	.HEX3_D(),			// out   std_logic_vector(6 downto 0);	-- 7segment #3
 	.HEX3_DP(),			// out   std_logic;						-- 7segment #3 DP
 	.HEX2_D(),			// out   std_logic_vector(6 downto 0);	-- 7segment #2
@@ -303,8 +304,8 @@ PC6001 PC6001
 	.LCD_RS(),			// out   std_logic;						-- LCD command/data select
 	.LCD_RW(),			// out   std_logic;						-- LCD read/write
 	.LCD_EN(),			// out   std_logic;						-- LCD enable
-	.CLK50M1(),			// in    std_logic;						-- clock 50MHz input #1
-	.CLK50M0(),			// in    std_logic;						-- clock 50MHz input #0
+	.CLK50M1(clk_sys2),	// in    std_logic;						-- clock 50MHz input #1
+	.CLK50M0(clk_sys),	// in    std_logic;						-- clock 50MHz input #0
 	.UART_RXD(),		// in    std_logic;						-- UART Rx
 	.UART_RTS(),		// in    std_logic;						-- UART CTS(!!)
 	.UART_TXD(),		// out   std_logic;						-- UART Tx

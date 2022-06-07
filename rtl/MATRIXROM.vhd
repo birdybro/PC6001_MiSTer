@@ -88,7 +88,7 @@ BEGIN
 		address_aclr_a => "CLEAR0",
 		clock_enable_input_a => "BYPASS",
 		clock_enable_output_a => "BYPASS",
-		init_file => "../src/matrixrom.mif",
+		init_file => "rtl/matrixrom.mif",
 		intended_device_family => "Cyclone III",
 		lpm_type => "altsyncram",
 		numwords_a => 2048,
