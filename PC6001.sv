@@ -205,26 +205,7 @@ localparam CONF_STR = {
 	"PC6001;;",
 	"-;",
 	"O[122:121],Aspect ratio,Original,Full Screen,[ARC1],[ARC2];",
-	"O[2],TV Mode,NTSC,PAL;",
-	"O[4:3],Noise,White,Red,Green,Blue;",
 	"-;",
-	"P1,Test Page 1;",
-	"P1-;",
-	"P1-, -= Options in page 1 =-;",
-	"P1-;",
-	"P1O[5],Option 1-1,Off,On;",
-	"d0P1F1,BIN;",
-	"H0P1O[10],Option 1-2,Off,On;",
-	"-;",
-	"P2,Test Page 2;",
-	"P2-;",
-	"P2-, -= Options in page 2 =-;",
-	"P2-;",
-	"P2S0,DSK;",
-	"P2O[7:6],Option 2,1,2,3,4;",
-	"-;",
-	"-;",
-	"T[0],Reset;",
 	"R[0],Reset and close OSD;",
 	"V,v",`BUILD_DATE 
 };
@@ -245,7 +226,7 @@ hps_io #(.CONF_STR(CONF_STR)) hps_io
 
 	.buttons(buttons),
 	.status(status),
-	.status_menumask({status[5]}),
+	.status_menumask(),
 	
 	.ps2_key(ps2_key)
 );
@@ -273,36 +254,78 @@ wire VSync;
 wire ce_pix;
 wire [7:0] video;
 
-PC6001 PC6001
-(
-	.clk(clk_sys),
-	.reset(reset),
-	
-	.pal(status[2]),
-	.scandouble(forced_scandoubler),
-
-	.ce_pix(ce_pix),
-
-	.HBlank(HBlank),
-	.HSync(HSync),
-	.VBlank(VBlank),
-	.VSync(VSync),
-
-	.video(video)
-);
-
 assign CLK_VIDEO = clk_sys;
 assign CE_PIXEL = ce_pix;
-
 assign VGA_DE = ~(HBlank | VBlank);
 assign VGA_HS = HSync;
 assign VGA_VS = VSync;
-assign VGA_G  = (!col || col == 2) ? video : 8'd0;
-assign VGA_R  = (!col || col == 1) ? video : 8'd0;
-assign VGA_B  = (!col || col == 3) ? video : 8'd0;
 
-reg  [26:0] act_cnt;
-always @(posedge clk_sys) act_cnt <= act_cnt + 1'd1; 
-assign LED_USER    = act_cnt[26]  ? act_cnt[25:18]  > act_cnt[7:0]  : act_cnt[25:18]  <= act_cnt[7:0];
+PC6001 PC6001
+(
+	.DRAM_D(),			// inout std_logic_vector(15 downto 0);	-- SDRAM data bus
+	.DRAM_A(),			// out   std_logic_vector(12 downto 0);	-- SDRAM address bus
+	.DRAM_CLK(),		// out   std_logic;						-- SDRAM clock output
+	.DRAM_CKE(),		// out   std_logic;						-- SDRAM clock enable
+	.DRAM_LDQM(),		// out   std_logic;						-- SDRAM LowerByte Data Mask
+	.DRAM_UDQM(),		// out   std_logic;						-- SDRAM UpperByte Data Mask
+	.DRAM_WE_N(),		// out   std_logic;						-- SDRAM write Enable
+	.DRAM_CAS_N(),		// out   std_logic;						-- SDRAM CAS
+	.DRAM_RAS_N(),		// out   std_logic;						-- SDRAM RAS
+	.DRAM_CS_N(),		// out   std_logic;						-- SDRAM chip select
+	.DRAM_BA_1(),		// out   std_logic;						-- SDRAM Bank #1
+	.DRAM_BA_0(),		// out   std_logic;						-- SDRAM Bank #0
+	.FLASH_D15_AM1(),	// inout std_logic;						-- FLASH data bus bit15 or adrress-1
+	.FLASH_D(),			// inout std_logic_vector(14 downto 0);	-- FLASH data bus
+	.FLASH_A(),			// out   std_logic_vector(21 downto 0);	-- FLASH adrress bus
+	.FLASH_WE_N(),		// out   std_logic;						-- FLASH write enable
+	.FLASH_RESET_N(),	// out   std_logic;						-- FLASH reset
+	.FLASH_WP_N(),		// out   std_logic;						-- FLASH write protect
+	.FLASH_RY(),		// in    std_logic;						-- FLASH ready
+	.FLASH_CE_N(),		// out   std_logic;						-- FLASH chip enable
+	.FLASH_OE_N(),		// out   std_logic;						-- FLASH output enable
+	.FLASH_BYTE_N(),	// out   std_logic;						-- FLASH byte mode
+	.VGA_R(),			// out   std_logic_vector(3 downto 0);	-- VGA red data
+	.VGA_G(),			// out   std_logic_vector(3 downto 0);	-- VGA green data
+	.VGA_B(),			// out   std_logic_vector(3 downto 0);	-- VGA blue data
+	.VGA_HS(),			// out   std_logic;						-- VGA H_SYNC
+	.VGA_VS(),			// out   std_logic;						-- VGA V_SYNC
+	.HEX3_D(),			// out   std_logic_vector(6 downto 0);	-- 7segment #3
+	.HEX3_DP(),			// out   std_logic;						-- 7segment #3 DP
+	.HEX2_D(),			// out   std_logic_vector(6 downto 0);	-- 7segment #2
+	.HEX2_DP(),			// out   std_logic;						-- 7segment #2 DP
+	.HEX1_D(),			// out   std_logic_vector(6 downto 0);	-- 7segment #1
+	.HEX1_DP(),			// out   std_logic;						-- 7segment #1 DP
+	.HEX0_D(),			// out   std_logic_vector(6 downto 0);	-- 7segment #0
+	.HEX0_DP(),			// out   std_logic;						-- 7segment #0 DP
+	.LEDG(),			// out   std_logic_vector(9 downto 0);	-- LED
+	.LCD_D(),			// inout std_logic_vector(7 downto 0);	-- LCD data bus
+	.LCD_BLON(),		// out   std_logic;						-- LCD back light on
+	.LCD_RS(),			// out   std_logic;						-- LCD command/data select
+	.LCD_RW(),			// out   std_logic;						-- LCD read/write
+	.LCD_EN(),			// out   std_logic;						-- LCD enable
+	.CLK50M1(),			// in    std_logic;						-- clock 50MHz input #1
+	.CLK50M0(),			// in    std_logic;						-- clock 50MHz input #0
+	.UART_RXD(),		// in    std_logic;						-- UART Rx
+	.UART_RTS(),		// in    std_logic;						-- UART CTS(!!)
+	.UART_TXD(),		// out   std_logic;						-- UART Tx
+	.UART_CTS(),		// out   std_logic;						-- UART RTS(!!)
+	.PS2_KBDAT(),		// inout std_logic;						-- PS2 keyboard data
+	.PS2_KBCLK(),		// inout std_logic;						-- PS2 keyboard clock
+	.PS2_MSDAT(),		// inout std_logic;						-- PS2 mouse data
+	.PS2_MSCLK(),		// inout std_logic;						-- PS2 mouse clock
+	.BUTTON(),			// in    std_logic_vector(2 downto 0);	-- push button
+	.SW(),				// in    std_logic_vector(9 downto 0);	-- DIPSW
+	.GPIO1_D(),			// inout std_logic_vector(31 downto 0);	-- GPIO #1 data
+	.GPIO1_CLKIN(),		// in    std_logic_vector(1 downto 0);	-- GPIO #1 clock input
+	.GPIO1_CLKOUT(),	// out   std_logic_vector(1 downto 0);	-- GPIO #1 clock output
+	.GPIO0_D(),			// inout std_logic_vector(31 downto 0);	-- GPIO #0 data
+	.GPIO0_CLKIN(),		// in    std_logic_vector(1 downto 0);	-- GPIO #0 clock input
+	.GPIO0_CLKOUT(),	// out   std_logic_vector(1 downto 0);	-- GPIO #0 clock output
+	.SD_DAT(),			// inout std_logic_vector(3 downto 0);	-- SD card data
+	.SD_CMD(),			// inout std_logic;						-- SD card command
+	.SD_CLK(),			// out   std_logic;						-- SD card clock output
+	.SD_WP_N()			// in    std_logic						-- SD card write protect
+);
+
 
 endmodule
